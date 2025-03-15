@@ -1,29 +1,41 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Weekly Availability Statistics (Starting {{ start_date.strftime("%b %d, %Y") }})</h1>
+<h1 class="mb-4 text-center">
+  Weekly Availability Statistics
+  <small class="text-muted">(Starting {{ start_date.strftime("%b %d, %Y") }})</small>
+</h1>
 
-<div>
-  <a href="{{ prev_link }}">Previous Week</a> |
-  <a href="{{ next_link }}">Next Week</a> |
-  <a href="{{ current_link }}">Current Week</a>
+<!-- Navigation row (Previous / Next / Current) and optional "Back to Dashboard" -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <a class="btn btn-outline-secondary me-2" href="{{ prev_link }}">Previous Week</a>
+    <a class="btn btn-outline-secondary me-2" href="{{ next_link }}">Next Week</a>
+    <a class="btn btn-outline-secondary me-2" href="{{ current_link }}">Current Week</a>
+  </div>
+  <!-- Example "Back to Dashboard" button -->
+  <a class="btn btn-outline-info" href="{{ url_for('dashboard') }}">
+    ← Back to Dashboard
+  </a>
 </div>
 
-<table border="1" cellpadding="5" style="border-collapse: collapse; margin-top: 10px;">
-  <thead>
-    <tr>
-      <th>Colleague</th>
-      <th>Working Days (Mon-Fri)</th>
-      <th>Total Mon-Fri</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for item in stats_data %}
-    <tr>
-      <td>{{ item.colleague.name }}</td>
-      <td>{{ item.working_days }}</td>
-      <td>{{ item.total_days }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="table-responsive">
+  <table class="table table-striped table-hover align-middle">
+    <thead class="table-success">
+      <tr>
+        <th>Colleague</th>
+        <th>Working Days (Mon-Fri)</th>
+        <th>Total Mon-Fri</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in stats_data %}
+      <tr>
+        <td>{{ item.colleague.name }}</td>
+        <td>{{ item.working_days }}</td>
+        <td>{{ item.total_days }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}

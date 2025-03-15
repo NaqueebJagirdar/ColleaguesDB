@@ -1,71 +1,75 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Weekly Availability (Starting {{ start_date.strftime("%b %d, %Y") }})</h1>
+<h1 class="mb-4 text-center">
+  Weekly Availability
+  <small class="text-muted">(Starting {{ start_date.strftime("%b %d, %Y") }})</small>
+</h1>
 
-<div>
-  <!-- Links to shift the week by 7 days -->
-  <a href="{{ prev_link }}">Previous Week</a> |
-  <a href="{{ next_link }}">Next Week</a>
-  <a href="{{ current_link }}">Current Week</a>
-  <a href="{{ url_for('stats') }}">Statistics</a>
+<!-- Navigation Links and Save Button -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <a class="btn btn-outline-secondary me-2" href="{{ prev_link }}">Previous Week</a>
+    <a class="btn btn-outline-secondary me-2" href="{{ next_link }}">Next Week</a>
+    <a class="btn btn-outline-secondary me-2" href="{{ current_link }}">Current Week</a>
+    <a class="btn btn-outline-info" href="{{ url_for('stats') }}">Statistics</a>
+  </div>
+  <!-- Place the Save button here -->
+  <button type="submit" form="availabilityForm" class="btn btn-primary">Save Changes</button>
 </div>
 
-<form method="POST">
-  <div style="text-align: right; margin-bottom: 10px;">
-    <button type="submit">Save Changes</button>
+<form id="availabilityForm" method="POST">
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover align-middle">
+      <thead class="table-dark">
+        <!-- First header row: Name + each date -->
+        <tr>
+          <th rowspan="2" class="text-center">Name</th>
+          {% for d in date_columns %}
+            <th class="text-center">{{ d.strftime('%b %d') }}</th>
+          {% endfor %}
+        </tr>
+        <!-- Second header row: each weekday -->
+        <tr>
+          {% for d in date_columns %}
+            <th class="text-center">{{ d.strftime('%a') }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for colleague in colleagues %}
+        <tr>
+          <td>{{ colleague.name }}</td>
+          {% for day_date in date_columns %}
+            {% set field_name = "colleague_" ~ colleague.id ~ "_day_" ~ day_date %}
+            <td>
+              <select name="{{ field_name }}" class="form-select">
+                <option value="">-</option>
+                <option value="Working"
+                  {% if colleague.id in calendar_dict and day_date in calendar_dict[colleague.id]
+                       and calendar_dict[colleague.id][day_date] == "Working" %}
+                      selected
+                  {% endif %}
+                >Working</option>
+                <option value="Holiday"
+                  {% if colleague.id in calendar_dict and day_date in calendar_dict[colleague.id]
+                       and calendar_dict[colleague.id][day_date] == "Holiday" %}
+                      selected
+                  {% endif %}
+                >Holiday</option>
+                <option value="Business Trip"
+                  {% if colleague.id in calendar_dict and day_date in calendar_dict[colleague.id]
+                       and calendar_dict[colleague.id][day_date] == "Business Trip" %}
+                      selected
+                  {% endif %}
+                >Business Trip</option>
+                <!-- Add more options as needed -->
+              </select>
+            </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
-  <table border="1" cellpadding="5" style="border-collapse: collapse;">
-    <thead>
-      <!-- First header row: Name + each date -->
-      <tr>
-        <th rowspan="2">Name</th>
-        {% for d in date_columns %}
-          <th>{{ d.strftime('%b %d') }}</th>
-        {% endfor %}
-      </tr>
-
-      <!-- Second header row: each weekday -->
-      <tr>
-        {% for d in date_columns %}
-          <th>{{ d.strftime('%a') }}</th>
-        {% endfor %}
-      </tr>
-    </thead>
-    <tbody>
-      {% for colleague in colleagues %}
-      <tr>
-        <td>{{ colleague.name }}</td>
-        {% for day_date in date_columns %}
-        {% set field_name = "colleague_" ~ colleague.id ~ "_day_" ~ day_date %}
-        <td>
-          <select name="{{ field_name }}">
-            <option value="">-</option>
-            <option value="Working"
-              {% if colleague.id in calendar_dict and day_date in calendar_dict[colleague.id]
-                   and calendar_dict[colleague.id][day_date] == "Working" %}
-                selected
-              {% endif %}
-            >Working</option>
-            <option value="Holiday"
-              {% if colleague.id in calendar_dict and day_date in calendar_dict[colleague.id]
-                   and calendar_dict[colleague.id][day_date] == "Holiday" %}
-                selected
-              {% endif %}
-            >Holiday</option>
-            <option value="Business Trip"
-              {% if colleague.id in calendar_dict and day_date in calendar_dict[colleague.id]
-                   and calendar_dict[colleague.id][day_date] == "Business Trip" %}
-                selected
-              {% endif %}
-            >Business Trip</option>
-            <!-- Add more options as needed -->
-          </select>
-        </td>
-        {% endfor %}
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <br>
 </form>
 {% endblock %}
