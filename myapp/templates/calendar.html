@@ -1,0 +1,28 @@
+<!-- calendar.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Calendar for {{ colleague.name }}</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in entries %}
+        <tr>
+            <td>{{ entry.date }}</td>
+            <td>{{ entry.entry_type }}</td>
+            <td>{{ entry.notes or 'N/A' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- A link back to the main dashboard, if desired -->
+<a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Weekly Availability Statistics (Starting {{ start_date.strftime("%b %d, %Y") }})</h1>
+
+<div>
+  <a href="{{ prev_link }}">Previous Week</a> |
+  <a href="{{ next_link }}">Next Week</a> |
+  <a href="{{ current_link }}">Current Week</a>
+</div>
+
+<table border="1" cellpadding="5" style="border-collapse: collapse; margin-top: 10px;">
+  <thead>
+    <tr>
+      <th>Colleague</th>
+      <th>Working Days (Mon-Fri)</th>
+      <th>Total Mon-Fri</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in stats_data %}
+    <tr>
+      <td>{{ item.colleague.name }}</td>
+      <td>{{ item.working_days }}</td>
+      <td>{{ item.total_days }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
